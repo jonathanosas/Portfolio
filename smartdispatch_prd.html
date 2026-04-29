@@ -1,0 +1,1335 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>SmartDispatch AI — Product Requirements Document | Jonathan Ekhator</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=DM+Serif+Display:ital@0;1&family=DM+Sans:wght@300;400;500;600&display=swap" rel="stylesheet">
+<style>
+  *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+  :root {
+    --blue: #1D4ED8;
+    --blue-mid: #2563EB;
+    --blue-light: #EFF6FF;
+    --blue-border: #BFDBFE;
+    --teal: #0D9488;
+    --teal-light: #F0FDFA;
+    --amber: #B45309;
+    --amber-light: #FFFBEB;
+    --amber-border: #FDE68A;
+    --red: #DC2626;
+    --red-light: #FEF2F2;
+    --green: #16A34A;
+    --green-light: #F0FDF4;
+    --gray-50: #F9FAFB;
+    --gray-100: #F3F4F6;
+    --gray-200: #E5E7EB;
+    --gray-400: #9CA3AF;
+    --gray-600: #4B5563;
+    --gray-800: #1F2937;
+    --black: #0F172A;
+    --white: #FFFFFF;
+    --serif: 'DM Serif Display', Georgia, serif;
+    --sans: 'DM Sans', system-ui, sans-serif;
+  }
+
+  html { scroll-behavior: smooth; }
+
+  body {
+    font-family: var(--sans);
+    background: var(--white);
+    color: var(--black);
+    line-height: 1.7;
+    font-size: 15px;
+  }
+
+  /* NAV */
+  nav {
+    position: sticky;
+    top: 0;
+    z-index: 100;
+    background: var(--white);
+    border-bottom: 1px solid var(--gray-200);
+    padding: 0 2rem;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    height: 52px;
+  }
+  .nav-left {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+  }
+  .nav-back {
+    font-size: 13px;
+    color: var(--gray-400);
+    text-decoration: none;
+    display: flex;
+    align-items: center;
+    gap: 4px;
+    transition: color 0.2s;
+  }
+  .nav-back:hover { color: var(--blue-mid); }
+  .nav-divider {
+    color: var(--gray-200);
+    font-size: 18px;
+  }
+  .nav-title {
+    font-size: 13px;
+    font-weight: 600;
+    color: var(--gray-800);
+  }
+  .nav-badge {
+    background: var(--blue-light);
+    color: var(--blue-mid);
+    font-size: 11px;
+    font-weight: 600;
+    padding: 2px 10px;
+    border-radius: 100px;
+    letter-spacing: 0.04em;
+    text-transform: uppercase;
+  }
+  .nav-meta {
+    font-size: 12px;
+    color: var(--gray-400);
+    display: flex;
+    gap: 1.5rem;
+    align-items: center;
+  }
+
+  /* LAYOUT */
+  .layout {
+    display: grid;
+    grid-template-columns: 220px 1fr;
+    max-width: 1100px;
+    margin: 0 auto;
+    min-height: 100vh;
+  }
+
+  /* SIDEBAR */
+  .sidebar {
+    padding: 2rem 1.5rem;
+    border-right: 1px solid var(--gray-200);
+    position: sticky;
+    top: 52px;
+    height: calc(100vh - 52px);
+    overflow-y: auto;
+  }
+  .sidebar-label {
+    font-size: 10px;
+    font-weight: 700;
+    letter-spacing: 0.12em;
+    text-transform: uppercase;
+    color: var(--gray-400);
+    margin-bottom: 0.75rem;
+    padding: 0 0.5rem;
+  }
+  .sidebar-nav {
+    list-style: none;
+    margin-bottom: 2rem;
+  }
+  .sidebar-nav li a {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    padding: 5px 8px;
+    border-radius: 6px;
+    font-size: 13px;
+    color: var(--gray-600);
+    text-decoration: none;
+    transition: all 0.15s;
+    line-height: 1.4;
+  }
+  .sidebar-nav li a:hover {
+    background: var(--gray-100);
+    color: var(--black);
+  }
+  .sidebar-num {
+    font-size: 10px;
+    color: var(--gray-400);
+    font-weight: 600;
+    min-width: 16px;
+  }
+
+  .doc-meta {
+    background: var(--gray-50);
+    border: 1px solid var(--gray-200);
+    border-radius: 8px;
+    padding: 1rem;
+    font-size: 12px;
+  }
+  .doc-meta-row {
+    display: flex;
+    justify-content: space-between;
+    padding: 4px 0;
+    border-bottom: 1px solid var(--gray-200);
+    gap: 8px;
+  }
+  .doc-meta-row:last-child { border-bottom: none; }
+  .doc-meta-key { color: var(--gray-400); font-weight: 500; }
+  .doc-meta-val { color: var(--gray-800); font-weight: 500; text-align: right; }
+
+  /* MAIN */
+  main {
+    padding: 3rem 3rem 5rem;
+    max-width: 760px;
+  }
+
+  /* HERO / DOC HEADER */
+  .doc-header {
+    margin-bottom: 3rem;
+    padding-bottom: 2rem;
+    border-bottom: 2px solid var(--gray-200);
+  }
+  .product-tag {
+    display: inline-flex;
+    align-items: center;
+    gap: 6px;
+    font-size: 12px;
+    font-weight: 600;
+    letter-spacing: 0.06em;
+    text-transform: uppercase;
+    color: var(--blue-mid);
+    margin-bottom: 1rem;
+  }
+  .doc-header h1 {
+    font-family: var(--serif);
+    font-size: 2.6rem;
+    font-weight: 400;
+    color: var(--black);
+    line-height: 1.2;
+    margin-bottom: 0.75rem;
+  }
+  .doc-header h1 span {
+    font-style: italic;
+    color: var(--blue-mid);
+  }
+  .tagline {
+    font-size: 17px;
+    color: var(--gray-600);
+    font-weight: 300;
+    margin-bottom: 1.5rem;
+    line-height: 1.6;
+  }
+  .header-metrics {
+    display: grid;
+    grid-template-columns: repeat(4, 1fr);
+    gap: 1px;
+    background: var(--gray-200);
+    border: 1px solid var(--gray-200);
+    border-radius: 10px;
+    overflow: hidden;
+    margin-top: 1.5rem;
+  }
+  .hm-cell {
+    background: var(--white);
+    padding: 1rem;
+    text-align: center;
+  }
+  .hm-value {
+    font-family: var(--serif);
+    font-size: 1.6rem;
+    color: var(--blue-mid);
+    line-height: 1;
+    margin-bottom: 4px;
+  }
+  .hm-label {
+    font-size: 11px;
+    color: var(--gray-400);
+    line-height: 1.4;
+  }
+
+  /* SECTION HEADINGS */
+  .section {
+    margin-bottom: 3.5rem;
+    scroll-margin-top: 70px;
+  }
+  .section-number {
+    font-size: 11px;
+    font-weight: 700;
+    letter-spacing: 0.1em;
+    text-transform: uppercase;
+    color: var(--blue-mid);
+    margin-bottom: 0.4rem;
+  }
+  .section h2 {
+    font-family: var(--serif);
+    font-size: 1.65rem;
+    font-weight: 400;
+    color: var(--black);
+    margin-bottom: 1rem;
+    line-height: 1.3;
+  }
+  .section h3 {
+    font-size: 14px;
+    font-weight: 600;
+    text-transform: uppercase;
+    letter-spacing: 0.07em;
+    color: var(--gray-600);
+    margin: 2rem 0 0.75rem;
+  }
+  .section p {
+    color: var(--gray-600);
+    margin-bottom: 1rem;
+    font-size: 15px;
+    line-height: 1.7;
+  }
+  .section p:last-child { margin-bottom: 0; }
+
+  /* CALLOUT */
+  .callout {
+    border-left: 3px solid var(--blue-mid);
+    background: var(--blue-light);
+    padding: 1rem 1.25rem;
+    border-radius: 0 8px 8px 0;
+    margin: 1.25rem 0;
+  }
+  .callout p {
+    font-size: 15px;
+    color: #1E40AF;
+    margin: 0;
+    font-style: italic;
+  }
+  .callout-warn {
+    border-left-color: var(--amber);
+    background: var(--amber-light);
+  }
+  .callout-warn p { color: #92400E; }
+  .callout-success {
+    border-left-color: var(--green);
+    background: var(--green-light);
+  }
+  .callout-success p { color: #14532D; }
+
+  /* STAT ROW */
+  .stat-row {
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    gap: 0.75rem;
+    margin: 1.25rem 0;
+  }
+  .stat-card {
+    background: var(--gray-50);
+    border: 1px solid var(--gray-200);
+    border-radius: 8px;
+    padding: 1rem;
+    text-align: center;
+  }
+  .stat-number {
+    font-family: var(--serif);
+    font-size: 1.8rem;
+    color: var(--black);
+    line-height: 1;
+    margin-bottom: 4px;
+  }
+  .stat-label {
+    font-size: 12px;
+    color: var(--gray-400);
+    line-height: 1.4;
+  }
+
+  /* PERSONA CARDS */
+  .persona-grid {
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    gap: 1rem;
+    margin: 1.25rem 0;
+  }
+  .persona-card {
+    border: 1px solid var(--gray-200);
+    border-radius: 12px;
+    overflow: hidden;
+  }
+  .persona-header {
+    padding: 1rem 1rem 0.75rem;
+    background: var(--gray-50);
+    border-bottom: 1px solid var(--gray-200);
+  }
+  .persona-avatar {
+    width: 40px;
+    height: 40px;
+    border-radius: 50%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-weight: 700;
+    font-size: 15px;
+    margin-bottom: 8px;
+  }
+  .persona-name {
+    font-size: 14px;
+    font-weight: 600;
+    color: var(--black);
+  }
+  .persona-role {
+    font-size: 12px;
+    color: var(--gray-400);
+    margin-top: 1px;
+  }
+  .persona-body {
+    padding: 0.9rem 1rem;
+  }
+  .persona-row {
+    display: flex;
+    flex-direction: column;
+    gap: 2px;
+    margin-bottom: 0.75rem;
+  }
+  .persona-row:last-child { margin-bottom: 0; }
+  .persona-row-label {
+    font-size: 10px;
+    font-weight: 700;
+    text-transform: uppercase;
+    letter-spacing: 0.08em;
+    color: var(--gray-400);
+  }
+  .persona-row-val {
+    font-size: 13px;
+    color: var(--gray-800);
+    line-height: 1.45;
+  }
+
+  /* JTBD */
+  .jtbd-block {
+    background: var(--gray-50);
+    border: 1px solid var(--gray-200);
+    border-radius: 10px;
+    padding: 1.1rem 1.25rem;
+    margin: 0.75rem 0;
+    display: grid;
+    grid-template-columns: auto 1fr;
+    gap: 1rem;
+    align-items: start;
+  }
+  .jtbd-who {
+    font-size: 11px;
+    font-weight: 700;
+    text-transform: uppercase;
+    letter-spacing: 0.07em;
+    color: var(--blue-mid);
+    background: var(--blue-light);
+    border: 1px solid var(--blue-border);
+    padding: 3px 10px;
+    border-radius: 100px;
+    white-space: nowrap;
+    margin-top: 2px;
+  }
+  .jtbd-block p {
+    font-size: 14px;
+    color: var(--gray-600);
+    font-style: italic;
+    margin: 0;
+    line-height: 1.55;
+  }
+
+  /* TABLE */
+  table {
+    width: 100%;
+    border-collapse: collapse;
+    font-size: 13px;
+    margin: 1rem 0;
+    border: 1px solid var(--gray-200);
+    border-radius: 8px;
+    overflow: hidden;
+  }
+  thead th {
+    background: var(--gray-800);
+    color: rgba(255,255,255,0.85);
+    font-size: 11px;
+    font-weight: 600;
+    text-transform: uppercase;
+    letter-spacing: 0.08em;
+    padding: 9px 14px;
+    text-align: left;
+  }
+  tbody td {
+    padding: 10px 14px;
+    color: var(--gray-600);
+    border-bottom: 1px solid var(--gray-200);
+    vertical-align: top;
+    line-height: 1.5;
+  }
+  tbody tr:last-child td { border-bottom: none; }
+  tbody tr:hover td { background: var(--gray-50); }
+  .td-highlight {
+    font-weight: 600;
+    color: var(--black);
+  }
+
+  /* RICE BADGE */
+  .rice-high { color: #16A34A; font-weight: 700; }
+  .rice-mid { color: #D97706; font-weight: 700; }
+  .rice-low { color: #9CA3AF; font-weight: 500; }
+
+  /* FEATURE SPEC */
+  .feature-spec {
+    background: var(--white);
+    border: 1px solid var(--gray-200);
+    border-radius: 10px;
+    margin: 1rem 0;
+    overflow: hidden;
+  }
+  .feature-spec-header {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    padding: 0.9rem 1.25rem;
+    background: var(--gray-50);
+    border-bottom: 1px solid var(--gray-200);
+  }
+  .feature-spec-title {
+    font-size: 14px;
+    font-weight: 600;
+    color: var(--black);
+  }
+  .feature-spec-phase {
+    font-size: 11px;
+    font-weight: 600;
+    letter-spacing: 0.06em;
+    padding: 3px 10px;
+    border-radius: 100px;
+    text-transform: uppercase;
+  }
+  .phase-p1 { background: var(--blue-light); color: var(--blue-mid); }
+  .phase-p2 { background: var(--amber-light); color: var(--amber); }
+  .phase-p3 { background: var(--gray-100); color: var(--gray-600); }
+  .feature-spec-body {
+    padding: 1rem 1.25rem;
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 1rem;
+  }
+  .feature-spec-section label {
+    display: block;
+    font-size: 10px;
+    font-weight: 700;
+    text-transform: uppercase;
+    letter-spacing: 0.1em;
+    color: var(--gray-400);
+    margin-bottom: 4px;
+  }
+  .feature-spec-section p {
+    font-size: 13px;
+    color: var(--gray-600);
+    margin: 0;
+    line-height: 1.5;
+  }
+
+  /* USER STORY */
+  .story-block {
+    border: 1px solid var(--gray-200);
+    border-radius: 8px;
+    overflow: hidden;
+    margin: 0.75rem 0;
+    font-size: 13px;
+  }
+  .story-header {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    padding: 7px 12px;
+    background: var(--gray-50);
+    border-bottom: 1px solid var(--gray-200);
+  }
+  .story-id {
+    font-size: 11px;
+    font-weight: 700;
+    color: var(--gray-400);
+    letter-spacing: 0.05em;
+    font-family: monospace;
+  }
+  .story-priority {
+    font-size: 10px;
+    font-weight: 700;
+    text-transform: uppercase;
+    letter-spacing: 0.07em;
+    padding: 2px 8px;
+    border-radius: 100px;
+  }
+  .p-must { background: #FEE2E2; color: #991B1B; }
+  .p-should { background: var(--amber-light); color: #92400E; }
+  .p-could { background: var(--gray-100); color: var(--gray-600); }
+  .story-body {
+    padding: 0.75rem 1rem;
+    color: var(--gray-600);
+    line-height: 1.5;
+  }
+  .story-body strong { color: var(--black); }
+  .ac-list {
+    list-style: none;
+    margin-top: 8px;
+    border-top: 1px solid var(--gray-200);
+    padding-top: 8px;
+  }
+  .ac-list li {
+    display: flex;
+    gap: 8px;
+    margin-bottom: 4px;
+    font-size: 12px;
+    color: var(--gray-600);
+  }
+  .ac-list li::before {
+    content: '✓';
+    color: var(--green);
+    font-weight: 700;
+    flex-shrink: 0;
+  }
+
+  /* OKR TABLE */
+  .okr-block {
+    margin: 1rem 0;
+  }
+  .okr-objective {
+    background: var(--blue-light);
+    border: 1px solid var(--blue-border);
+    border-radius: 8px 8px 0 0;
+    padding: 0.8rem 1.1rem;
+    font-size: 14px;
+    font-weight: 600;
+    color: #1E40AF;
+  }
+  .okr-krs {
+    border: 1px solid var(--blue-border);
+    border-top: none;
+    border-radius: 0 0 8px 8px;
+    overflow: hidden;
+  }
+  .okr-kr {
+    display: grid;
+    grid-template-columns: 1fr auto;
+    gap: 1rem;
+    align-items: center;
+    padding: 0.75rem 1.1rem;
+    border-bottom: 1px solid var(--gray-200);
+    font-size: 13px;
+  }
+  .okr-kr:last-child { border-bottom: none; }
+  .okr-kr-text { color: var(--gray-600); }
+  .okr-kr-target {
+    font-size: 12px;
+    font-weight: 700;
+    color: var(--blue-mid);
+    white-space: nowrap;
+    background: var(--blue-light);
+    padding: 2px 10px;
+    border-radius: 100px;
+  }
+
+  /* ROADMAP */
+  .roadmap-phases {
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    gap: 1rem;
+    margin: 1.25rem 0;
+  }
+  .roadmap-phase {
+    border: 1px solid var(--gray-200);
+    border-radius: 10px;
+    overflow: hidden;
+  }
+  .roadmap-phase-header {
+    padding: 0.85rem 1rem;
+    font-size: 13px;
+    font-weight: 600;
+  }
+  .rph-1 { background: var(--blue-light); color: #1E40AF; }
+  .rph-2 { background: var(--amber-light); color: #92400E; }
+  .rph-3 { background: var(--green-light); color: #14532D; }
+  .roadmap-phase-sub {
+    font-size: 11px;
+    font-weight: 400;
+    margin-top: 1px;
+    opacity: 0.75;
+  }
+  .roadmap-phase-body {
+    padding: 0.9rem 1rem;
+  }
+  .roadmap-feature {
+    display: flex;
+    align-items: flex-start;
+    gap: 8px;
+    padding: 5px 0;
+    border-bottom: 1px solid var(--gray-200);
+    font-size: 13px;
+    color: var(--gray-600);
+    line-height: 1.45;
+  }
+  .roadmap-feature:last-child { border-bottom: none; }
+  .roadmap-dot {
+    width: 6px;
+    height: 6px;
+    border-radius: 50%;
+    margin-top: 6px;
+    flex-shrink: 0;
+  }
+  .dot-1 { background: var(--blue-mid); }
+  .dot-2 { background: var(--amber); }
+  .dot-3 { background: var(--green); }
+
+  /* RISK TABLE */
+  .risk-level {
+    display: inline-block;
+    font-size: 11px;
+    font-weight: 700;
+    padding: 2px 8px;
+    border-radius: 100px;
+    text-transform: uppercase;
+    letter-spacing: 0.05em;
+  }
+  .risk-high { background: #FEE2E2; color: #991B1B; }
+  .risk-med { background: var(--amber-light); color: #92400E; }
+  .risk-low { background: var(--green-light); color: #14532D; }
+
+  /* FOOTER */
+  footer {
+    background: var(--gray-50);
+    border-top: 1px solid var(--gray-200);
+    padding: 2rem 3rem;
+    text-align: center;
+    font-size: 13px;
+    color: var(--gray-400);
+    grid-column: 1 / -1;
+  }
+  footer a { color: var(--blue-mid); text-decoration: none; }
+
+  @media (max-width: 768px) {
+    .layout { grid-template-columns: 1fr; }
+    .sidebar { display: none; }
+    main { padding: 2rem 1.25rem; }
+    .persona-grid { grid-template-columns: 1fr; }
+    .header-metrics { grid-template-columns: repeat(2, 1fr); }
+    .roadmap-phases { grid-template-columns: 1fr; }
+    .stat-row { grid-template-columns: repeat(2, 1fr); }
+    .feature-spec-body { grid-template-columns: 1fr; }
+  }
+</style>
+</head>
+<body>
+
+<nav>
+  <div class="nav-left">
+    <a href="https://sites.google.com/view/jonathan-ekhator/home" class="nav-back">← Portfolio</a>
+    <span class="nav-divider">/</span>
+    <span class="nav-title">SmartDispatch AI</span>
+    <span class="nav-badge">PRD</span>
+  </div>
+  <div class="nav-meta">
+    <span>Author: Jonathan Ekhator</span>
+    <span>v1.0 · April 2025</span>
+  </div>
+</nav>
+
+<div class="layout">
+
+  <!-- SIDEBAR -->
+  <aside class="sidebar">
+    <div class="sidebar-label">Table of contents</div>
+    <ul class="sidebar-nav">
+      <li><a href="#overview"><span class="sidebar-num">01</span> Executive Summary</a></li>
+      <li><a href="#problem"><span class="sidebar-num">02</span> Problem Statement</a></li>
+      <li><a href="#personas"><span class="sidebar-num">03</span> User Personas</a></li>
+      <li><a href="#jtbd"><span class="sidebar-num">04</span> Jobs to be Done</a></li>
+      <li><a href="#features"><span class="sidebar-num">05</span> Feature Specs</a></li>
+      <li><a href="#stories"><span class="sidebar-num">06</span> User Stories</a></li>
+      <li><a href="#metrics"><span class="sidebar-num">07</span> Success Metrics</a></li>
+      <li><a href="#roadmap"><span class="sidebar-num">08</span> Roadmap</a></li>
+      <li><a href="#risks"><span class="sidebar-num">09</span> Risks & Dependencies</a></li>
+      <li><a href="#scope"><span class="sidebar-num">10</span> Out of Scope</a></li>
+    </ul>
+
+    <div class="sidebar-label">Document info</div>
+    <div class="doc-meta">
+      <div class="doc-meta-row"><span class="doc-meta-key">Status</span><span class="doc-meta-val" style="color:#16A34A;">Ready for Review</span></div>
+      <div class="doc-meta-row"><span class="doc-meta-key">Author</span><span class="doc-meta-val">J. Ekhator</span></div>
+      <div class="doc-meta-row"><span class="doc-meta-key">Version</span><span class="doc-meta-val">1.0</span></div>
+      <div class="doc-meta-row"><span class="doc-meta-key">Target Release</span><span class="doc-meta-val">Q3 2025</span></div>
+      <div class="doc-meta-row"><span class="doc-meta-key">Phase 1 Sprint</span><span class="doc-meta-val">12 weeks</span></div>
+      <div class="doc-meta-row"><span class="doc-meta-key">Team size</span><span class="doc-meta-val">8 people</span></div>
+    </div>
+  </aside>
+
+  <!-- MAIN -->
+  <main>
+
+    <!-- DOC HEADER -->
+    <div class="doc-header">
+      <div class="product-tag">Product Requirements Document</div>
+      <h1>SmartDispatch <span>AI</span></h1>
+      <p class="tagline">An intelligent dispatch prioritization engine that reduces late delivery rates and courier idle time through predictive demand modeling and real-time SLA risk scoring.</p>
+
+      <div class="header-metrics">
+        <div class="hm-cell">
+          <div class="hm-value">$108B+</div>
+          <div class="hm-label">Global last-mile market size</div>
+        </div>
+        <div class="hm-cell">
+          <div class="hm-value">15%</div>
+          <div class="hm-label">Target late delivery reduction</div>
+        </div>
+        <div class="hm-cell">
+          <div class="hm-value">10%</div>
+          <div class="hm-label">Target courier utilization gain</div>
+        </div>
+        <div class="hm-cell">
+          <div class="hm-value">Q3 '25</div>
+          <div class="hm-label">Phase 1 target release</div>
+        </div>
+      </div>
+    </div>
+
+    <!-- 01: EXECUTIVE SUMMARY -->
+    <section id="overview" class="section">
+      <div class="section-number">01 — Executive Summary</div>
+      <h2>What we're building and why now</h2>
+      <p>Delivery platforms lose hundreds of millions of dollars annually to inefficient dispatch decisions — orders routed to the wrong courier, demand surges handled reactively, SLA breaches noticed only after they happen. The current dispatch workflow relies on static rule sets that cannot adapt to real-time demand signals, and on dispatcher judgment under high-pressure, high-velocity conditions.</p>
+      <p>SmartDispatch AI is a predictive intelligence layer embedded inside the existing dispatch workflow. It surfaces three capabilities dispatchers currently have to infer manually: where demand will spike in the next 30 minutes, which open orders carry the highest SLA breach risk right now, and which couriers are best positioned to absorb rebalancing. It does not replace dispatcher judgment — it makes that judgment faster and more accurate.</p>
+
+      <div class="callout">
+        <p>This PRD covers Phase 1 scope: the predictive demand heatmap, AI dispatch queue prioritization, and SLA breach early warning. Phase 2 (courier capacity optimizer) and Phase 3 (surge response automation) are defined at the roadmap level only.</p>
+      </div>
+    </section>
+
+    <!-- 02: PROBLEM -->
+    <section id="problem" class="section">
+      <div class="section-number">02 — Problem Statement</div>
+      <h2>The problem we're solving</h2>
+
+      <h3>Market context</h3>
+      <p>The global last-mile delivery market exceeded $108 billion in 2023 and is growing at approximately 7.5% annually, driven by continued e-commerce growth and on-demand consumer expectations. At the same time, operational margins for delivery platforms are under sustained pressure. The average late delivery rate across major platforms sits between 12–18% depending on market, and each late delivery carries both a direct cost (re-delivery, compensation) and a long-term cost (customer churn, which studies put at 2–3x the cost of acquisition).</p>
+
+      <div class="stat-row">
+        <div class="stat-card">
+          <div class="stat-number">12–18%</div>
+          <div class="stat-label">Average late delivery rate across major platforms</div>
+        </div>
+        <div class="stat-card">
+          <div class="stat-number">23%</div>
+          <div class="stat-label">SLA coverage gap during peak demand surge windows</div>
+        </div>
+        <div class="stat-card">
+          <div class="stat-number">2–3×</div>
+          <div class="stat-label">Cost of customer churn vs. acquisition</div>
+        </div>
+      </div>
+
+      <h3>Core problem areas</h3>
+      <div class="callout callout-warn">
+        <p>Problem 1: Static dispatch rules cannot adapt to demand surge. Peak-hour coverage gaps of ~23% are structural, not incidental — they reflect a system that cannot predict demand 30 minutes ahead.</p>
+      </div>
+      <div class="callout callout-warn">
+        <p>Problem 2: SLA breach visibility is entirely reactive. Dispatchers learn about breaches from customer complaints or end-of-shift reports — never from leading indicators before a breach occurs.</p>
+      </div>
+      <div class="callout callout-warn">
+        <p>Problem 3: Courier capacity matching is manual at peak. During high-volume windows, dispatchers make 40–60 routing decisions per hour. Without ranked prioritization, high-value or time-critical orders are not systematically surfaced first.</p>
+      </div>
+    </section>
+
+    <!-- 03: PERSONAS -->
+    <section id="personas" class="section">
+      <div class="section-number">03 — User Personas</div>
+      <h2>Who uses this product</h2>
+      <p>SmartDispatch AI serves 3 user types. Primary users interact with the system directly during live operations. Secondary users consume its outputs for planning and reporting.</p>
+
+      <div class="persona-grid">
+        <div class="persona-card">
+          <div class="persona-header">
+            <div class="persona-avatar" style="background:#EFF6FF;color:#1D4ED8;">MR</div>
+            <div class="persona-name">Maria Rodriguez</div>
+            <div class="persona-role">Operations Manager · 34</div>
+          </div>
+          <div class="persona-body">
+            <div class="persona-row">
+              <span class="persona-row-label">Primary need</span>
+              <span class="persona-row-val">Fleet-level visibility and SLA compliance — before the day ends, not after</span>
+            </div>
+            <div class="persona-row">
+              <span class="persona-row-label">Pain today</span>
+              <span class="persona-row-val">Learns about coverage gaps from escalations, never from data in advance</span>
+            </div>
+            <div class="persona-row">
+              <span class="persona-row-label">Success looks like</span>
+              <span class="persona-row-val">Proactive SLA alerts with 30-min lead time</span>
+            </div>
+          </div>
+        </div>
+
+        <div class="persona-card">
+          <div class="persona-header">
+            <div class="persona-avatar" style="background:#F0FDF4;color:#16A34A;">JO</div>
+            <div class="persona-name">James Osei</div>
+            <div class="persona-role">Dispatcher · 28</div>
+          </div>
+          <div class="persona-body">
+            <div class="persona-row">
+              <span class="persona-row-label">Primary need</span>
+              <span class="persona-row-val">Decision support during peak hours — not more dashboards to monitor</span>
+            </div>
+            <div class="persona-row">
+              <span class="persona-row-label">Pain today</span>
+              <span class="persona-row-val">Makes 40–60 dispatch decisions per hour using gut feel and static rules</span>
+            </div>
+            <div class="persona-row">
+              <span class="persona-row-label">Success looks like</span>
+              <span class="persona-row-val">A pre-ranked queue — highest-risk orders surface automatically</span>
+            </div>
+          </div>
+        </div>
+
+        <div class="persona-card">
+          <div class="persona-header">
+            <div class="persona-avatar" style="background:#FFF7ED;color:#C2410C;">KA</div>
+            <div class="persona-name">Kwame Asante</div>
+            <div class="persona-role">Courier · 25</div>
+          </div>
+          <div class="persona-body">
+            <div class="persona-row">
+              <span class="persona-row-label">Primary need</span>
+              <span class="persona-row-val">Fair, predictable routing — no surprise multi-stop clusters during surge</span>
+            </div>
+            <div class="persona-row">
+              <span class="persona-row-label">Pain today</span>
+              <span class="persona-row-val">Receives overloaded batches without context on why or for how long</span>
+            </div>
+            <div class="persona-row">
+              <span class="persona-row-label">Success looks like</span>
+              <span class="persona-row-val">Transparent load signals and estimated recovery time after surge</span>
+            </div>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- 04: JTBD -->
+    <section id="jtbd" class="section">
+      <div class="section-number">04 — Jobs to be Done</div>
+      <h2>What users are trying to accomplish</h2>
+      <p>These JTBD statements were derived from synthesis of 12 dispatcher and operations interviews. They describe the underlying outcome users want, not the feature they want to use.</p>
+
+      <div class="jtbd-block">
+        <span class="jtbd-who">Ops Manager</span>
+        <p>"When I see demand spiking in the heatmap, I need to know which specific couriers to redeploy and to where — before SLAs start breaching — so I can act on a recommendation rather than improvise under pressure."</p>
+      </div>
+      <div class="jtbd-block">
+        <span class="jtbd-who">Dispatcher</span>
+        <p>"When I'm dispatching at peak hours and have 80 open orders, I need the system to pre-rank orders by urgency so I can triage in seconds rather than minutes, and not miss the orders that matter most."</p>
+      </div>
+      <div class="jtbd-block">
+        <span class="jtbd-who">Dispatcher</span>
+        <p>"When an order's SLA is about to breach, I need to see a clear warning before it happens so I can reassign to a faster courier rather than explaining a failure to a customer after the fact."</p>
+      </div>
+      <div class="jtbd-block">
+        <span class="jtbd-who">Courier</span>
+        <p>"When I'm being reassigned mid-route during a surge, I need to understand why and for how long, so the change feels fair and I can plan my next stop accordingly."</p>
+      </div>
+    </section>
+
+    <!-- 05: FEATURE SPECS -->
+    <section id="features" class="section">
+      <div class="section-number">05 — Feature Specifications</div>
+      <h2>What we're building — RICE scored</h2>
+      <p>Features are prioritized using RICE scoring (Reach × Impact × Confidence ÷ Effort). Phase 1 covers the top 3 features by score.</p>
+
+      <table>
+        <thead>
+          <tr>
+            <th>Feature</th>
+            <th>R</th>
+            <th>I</th>
+            <th>C%</th>
+            <th>E</th>
+            <th>RICE</th>
+            <th>Phase</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr>
+            <td class="td-highlight">AI Dispatch Queue Prioritization</td>
+            <td>900</td><td>3</td><td>80</td><td>4</td>
+            <td><span class="rice-high">540</span></td>
+            <td><span class="feature-spec-phase phase-p1">P1</span></td>
+          </tr>
+          <tr>
+            <td class="td-highlight">Predictive Demand Heatmap</td>
+            <td>600</td><td>4</td><td>80</td><td>5</td>
+            <td><span class="rice-high">480</span></td>
+            <td><span class="feature-spec-phase phase-p1">P1</span></td>
+          </tr>
+          <tr>
+            <td class="td-highlight">SLA Breach Early Warning System</td>
+            <td>900</td><td>3</td><td>70</td><td>5</td>
+            <td><span class="rice-high">420</span></td>
+            <td><span class="feature-spec-phase phase-p1">P1</span></td>
+          </tr>
+          <tr>
+            <td class="td-highlight">Courier Capacity Optimizer</td>
+            <td>600</td><td>3</td><td>80</td><td>4</td>
+            <td><span class="rice-mid">360</span></td>
+            <td><span class="feature-spec-phase phase-p2">P2</span></td>
+          </tr>
+          <tr>
+            <td class="td-highlight">Surge Response Playbook Automation</td>
+            <td>300</td><td>4</td><td>75</td><td>3</td>
+            <td><span class="rice-low">300</span></td>
+            <td><span class="feature-spec-phase phase-p3">P3</span></td>
+          </tr>
+        </tbody>
+      </table>
+
+      <h3>Phase 1 feature details</h3>
+
+      <div class="feature-spec">
+        <div class="feature-spec-header">
+          <span class="feature-spec-title">F-01 &nbsp;·&nbsp; AI Dispatch Queue Prioritization</span>
+          <span class="feature-spec-phase phase-p1">Phase 1</span>
+        </div>
+        <div class="feature-spec-body">
+          <div class="feature-spec-section">
+            <label>Description</label>
+            <p>Machine learning model ranks all open orders in real time by composite urgency score. Dispatchers see a sorted queue rather than a raw list. Override capability preserved.</p>
+          </div>
+          <div class="feature-spec-section">
+            <label>Scoring inputs</label>
+            <p>Time-to-SLA breach, customer tier, order value, nearest available courier distance, historical delay probability for zone + time-of-day.</p>
+          </div>
+          <div class="feature-spec-section">
+            <label>Acceptance criteria</label>
+            <p>Queue re-ranks within 30 seconds of new order events. Urgency score visible on each order card. Dispatcher override logged for model retraining.</p>
+          </div>
+          <div class="feature-spec-section">
+            <label>Success metric</label>
+            <p>15% reduction in late deliveries in pilot zone within 60 days of Phase 1 launch.</p>
+          </div>
+        </div>
+      </div>
+
+      <div class="feature-spec">
+        <div class="feature-spec-header">
+          <span class="feature-spec-title">F-02 &nbsp;·&nbsp; Predictive Demand Heatmap</span>
+          <span class="feature-spec-phase phase-p1">Phase 1</span>
+        </div>
+        <div class="feature-spec-body">
+          <div class="feature-spec-section">
+            <label>Description</label>
+            <p>Map overlay showing predicted order volume by zone for the next 30 and 60 minutes. Refreshes every 5 minutes using historical + real-time signals.</p>
+          </div>
+          <div class="feature-spec-section">
+            <label>Model inputs</label>
+            <p>Historical demand patterns by zone/hour/day, current active order density, event calendar (sports, concerts), weather API, promotional event feed.</p>
+          </div>
+          <div class="feature-spec-section">
+            <label>Acceptance criteria</label>
+            <p>Demand prediction accuracy ≥70% within 30-minute window at zone level. Ops manager can filter by zone, time window, and order type. Available on web + mobile.</p>
+          </div>
+          <div class="feature-spec-section">
+            <label>Success metric</label>
+            <p>Surge coverage gap reduced from 23% to under 15% within 90 days of launch across pilot markets.</p>
+          </div>
+        </div>
+      </div>
+
+      <div class="feature-spec">
+        <div class="feature-spec-header">
+          <span class="feature-spec-title">F-03 &nbsp;·&nbsp; SLA Breach Early Warning System</span>
+          <span class="feature-spec-phase phase-p1">Phase 1</span>
+        </div>
+        <div class="feature-spec-body">
+          <div class="feature-spec-section">
+            <label>Description</label>
+            <p>Automated alert system flags orders predicted to breach SLA more than 15 minutes before breach occurs. Alert surfaces in dispatch queue and ops manager dashboard.</p>
+          </div>
+          <div class="feature-spec-section">
+            <label>Risk model inputs</label>
+            <p>Current courier ETA vs. SLA window, traffic conditions, courier historical on-time rate for zone, order pick-up confirmation status.</p>
+          </div>
+          <div class="feature-spec-section">
+            <label>Acceptance criteria</label>
+            <p>Warning appears 15+ minutes before predicted breach. One-click reassignment action available from alert. False positive rate below 20% (validated against 30-day pilot data).</p>
+          </div>
+          <div class="feature-spec-section">
+            <label>Success metric</label>
+            <p>50% of at-risk orders successfully reassigned before breach within 60 days of Phase 1 launch.</p>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- 06: USER STORIES -->
+    <section id="stories" class="section">
+      <div class="section-number">06 — User Stories</div>
+      <h2>Selected stories with acceptance criteria</h2>
+
+      <div class="story-block">
+        <div class="story-header">
+          <span class="story-id">US-001</span>
+          <span class="story-priority p-must">Must have</span>
+        </div>
+        <div class="story-body">
+          <strong>As a dispatcher</strong>, I want to see all open orders ranked by urgency score so that I can prioritize the orders most at risk of SLA breach without manually reviewing each one.
+          <ul class="ac-list">
+            <li>Given I am on the dispatch screen, all open orders are sorted by urgency score (highest first) by default</li>
+            <li>Given an order's urgency changes, the queue re-sorts within 30 seconds without requiring a page refresh</li>
+            <li>Given I override the AI ranking, my action is confirmed and logged, and the override persists until I manually change it</li>
+          </ul>
+        </div>
+      </div>
+
+      <div class="story-block">
+        <div class="story-header">
+          <span class="story-id">US-002</span>
+          <span class="story-priority p-must">Must have</span>
+        </div>
+        <div class="story-body">
+          <strong>As an operations manager</strong>, I want to receive an early warning alert when an order is predicted to breach SLA so that I can take corrective action before the breach occurs.
+          <ul class="ac-list">
+            <li>Given an order's predicted ETA exceeds the SLA window by 15+ minutes, an alert badge appears on the order card in my dashboard</li>
+            <li>Given I click the alert, I am shown the predicted breach time, current courier ETA, and a one-click option to reassign</li>
+            <li>Given I dismiss an alert without action, the system logs the dismissal and adjusts alert thresholds for future model retraining</li>
+          </ul>
+        </div>
+      </div>
+
+      <div class="story-block">
+        <div class="story-header">
+          <span class="story-id">US-003</span>
+          <span class="story-priority p-should">Should have</span>
+        </div>
+        <div class="story-body">
+          <strong>As an operations manager</strong>, I want to see a real-time demand heatmap for the next 30 and 60 minutes so that I can pre-position couriers before demand spikes materialize.
+          <ul class="ac-list">
+            <li>Given I open the heatmap view, I see demand predictions overlaid on a city map by zone, color-coded by intensity</li>
+            <li>Given I select a zone, I see predicted order volume, current active couriers in zone, and a coverage gap indicator</li>
+            <li>Given the model confidence is below 60%, the zone displays a low-confidence indicator rather than a firm prediction</li>
+          </ul>
+        </div>
+      </div>
+
+      <div class="story-block">
+        <div class="story-header">
+          <span class="story-id">US-004</span>
+          <span class="story-priority p-could">Nice to have</span>
+        </div>
+        <div class="story-body">
+          <strong>As a courier</strong>, I want to see a notification when I am being reassigned during a surge so that I understand why my route has changed and can plan accordingly.
+          <ul class="ac-list">
+            <li>Given a dispatcher reassigns me during a surge, I receive a push notification with the reason (surge area) and new order details</li>
+            <li>Given the reassignment extends my active time beyond my scheduled shift end, I am shown an estimated additional duration</li>
+          </ul>
+        </div>
+      </div>
+    </section>
+
+    <!-- 07: METRICS -->
+    <section id="metrics" class="section">
+      <div class="section-number">07 — Success Metrics</div>
+      <h2>How we will know we've succeeded</h2>
+
+      <div class="okr-block">
+        <div class="okr-objective">Objective 1: Improve delivery SLA compliance in Phase 1 pilot markets</div>
+        <div class="okr-krs">
+          <div class="okr-kr">
+            <span class="okr-kr-text">Reduce late delivery rate from ~15% baseline to 12.75% or below (15% relative improvement)</span>
+            <span class="okr-kr-target">Target: ≤12.75%</span>
+          </div>
+          <div class="okr-kr">
+            <span class="okr-kr-text">50% of flagged at-risk orders successfully reassigned before SLA breach within 60 days of launch</span>
+            <span class="okr-kr-target">Target: ≥50%</span>
+          </div>
+          <div class="okr-kr">
+            <span class="okr-kr-text">SLA early warning false positive rate below 20% (to preserve dispatcher trust)</span>
+            <span class="okr-kr-target">Target: ≤20%</span>
+          </div>
+        </div>
+      </div>
+
+      <div class="okr-block">
+        <div class="okr-objective">Objective 2: Increase dispatcher decision throughput without increasing headcount</div>
+        <div class="okr-krs">
+          <div class="okr-kr">
+            <span class="okr-kr-text">Reduce average dispatch decision time per order from current baseline by 25%</span>
+            <span class="okr-kr-target">Target: -25%</span>
+          </div>
+          <div class="okr-kr">
+            <span class="okr-kr-text">Dispatcher adoption: 80% of dispatchers actively using AI queue ranking (not overriding by default) within 30 days of launch</span>
+            <span class="okr-kr-target">Target: ≥80%</span>
+          </div>
+        </div>
+      </div>
+
+      <div class="okr-block">
+        <div class="okr-objective">Objective 3: Reduce demand surge coverage gap through predictive heatmap</div>
+        <div class="okr-krs">
+          <div class="okr-kr">
+            <span class="okr-kr-text">Reduce peak-hour surge coverage gap from 23% to under 15% in pilot zones within 90 days</span>
+            <span class="okr-kr-target">Target: ≤15%</span>
+          </div>
+          <div class="okr-kr">
+            <span class="okr-kr-text">Demand heatmap prediction accuracy ≥70% at 30-minute window for pilot zones</span>
+            <span class="okr-kr-target">Target: ≥70%</span>
+          </div>
+        </div>
+      </div>
+
+      <h3>Guardrail metrics — do not degrade</h3>
+      <table>
+        <thead>
+          <tr><th>Metric</th><th>Current baseline</th><th>Guardrail threshold</th></tr>
+        </thead>
+        <tbody>
+          <tr>
+            <td>Dispatcher satisfaction score (NPS)</td>
+            <td>42</td>
+            <td>Must not drop below 38</td>
+          </tr>
+          <tr>
+            <td>Courier earnings per active hour</td>
+            <td>Tracked per market</td>
+            <td>Must not decline vs. pre-launch cohort</td>
+          </tr>
+          <tr>
+            <td>AI queue override rate</td>
+            <td>N/A (new)</td>
+            <td>If >40%, investigate before scaling Phase 2</td>
+          </tr>
+          <tr>
+            <td>System latency (queue re-rank time)</td>
+            <td>N/A (new)</td>
+            <td>Must complete within 30 seconds at 10,000 concurrent orders</td>
+          </tr>
+        </tbody>
+      </table>
+    </section>
+
+    <!-- 08: ROADMAP -->
+    <section id="roadmap" class="section">
+      <div class="section-number">08 — Phased Roadmap</div>
+      <h2>How we'll build and scale</h2>
+
+      <div class="roadmap-phases">
+        <div class="roadmap-phase">
+          <div class="roadmap-phase-header rph-1">
+            Phase 1 — Foundation
+            <div class="roadmap-phase-sub">Weeks 1–12 · Q3 2025</div>
+          </div>
+          <div class="roadmap-phase-body">
+            <div class="roadmap-feature"><div class="roadmap-dot dot-1"></div>AI dispatch queue prioritization (F-01)</div>
+            <div class="roadmap-feature"><div class="roadmap-dot dot-1"></div>Predictive demand heatmap (F-02)</div>
+            <div class="roadmap-feature"><div class="roadmap-dot dot-1"></div>SLA breach early warning (F-03)</div>
+            <div class="roadmap-feature"><div class="roadmap-dot dot-1"></div>Pilot: 2 cities, 1 market</div>
+            <div class="roadmap-feature"><div class="roadmap-dot dot-1"></div>Dispatcher feedback instrumentation</div>
+          </div>
+        </div>
+
+        <div class="roadmap-phase">
+          <div class="roadmap-phase-header rph-2">
+            Phase 2 — Expansion
+            <div class="roadmap-phase-sub">Weeks 13–24 · Q4 2025</div>
+          </div>
+          <div class="roadmap-phase-body">
+            <div class="roadmap-feature"><div class="roadmap-dot dot-2"></div>Courier capacity optimizer (F-04)</div>
+            <div class="roadmap-feature"><div class="roadmap-dot dot-2"></div>Multi-market rollout (5 cities)</div>
+            <div class="roadmap-feature"><div class="roadmap-dot dot-2"></div>Mobile ops manager view</div>
+            <div class="roadmap-feature"><div class="roadmap-dot dot-2"></div>Model retraining pipeline</div>
+            <div class="roadmap-feature"><div class="roadmap-dot dot-2"></div>Courier transparency notifications</div>
+          </div>
+        </div>
+
+        <div class="roadmap-phase">
+          <div class="roadmap-phase-header rph-3">
+            Phase 3 — Automation
+            <div class="roadmap-phase-sub">Q1 2026 onward</div>
+          </div>
+          <div class="roadmap-phase-body">
+            <div class="roadmap-feature"><div class="roadmap-dot dot-3"></div>Surge response playbook automation (F-05)</div>
+            <div class="roadmap-feature"><div class="roadmap-dot dot-3"></div>Full autonomy mode (configurable)</div>
+            <div class="roadmap-feature"><div class="roadmap-dot dot-3"></div>Integration: partner restaurant demand signals</div>
+            <div class="roadmap-feature"><div class="roadmap-dot dot-3"></div>Cross-market demand balancing</div>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- 09: RISKS -->
+    <section id="risks" class="section">
+      <div class="section-number">09 — Risks & Dependencies</div>
+      <h2>What could block or slow us down</h2>
+      <table>
+        <thead>
+          <tr><th>Risk</th><th>Level</th><th>Mitigation</th></tr>
+        </thead>
+        <tbody>
+          <tr>
+            <td>Model training data is insufficient in new markets with thin historical order data</td>
+            <td><span class="risk-level risk-high">High</span></td>
+            <td>Phase 1 restricted to 2 markets with 18+ months of clean historical data. New market onboarding requires 90-day data baseline before ML activation.</td>
+          </tr>
+          <tr>
+            <td>Dispatcher resistance to AI-ranked queues — override rate exceeds guardrail threshold</td>
+            <td><span class="risk-level risk-high">High</span></td>
+            <td>Co-design sprint with 6 dispatchers in weeks 3–4. Transparent scoring explainer on each order card. Override data feeds model improvement to increase trust over time.</td>
+          </tr>
+          <tr>
+            <td>Real-time data pipeline latency exceeds 30-second queue re-rank SLA under peak load</td>
+            <td><span class="risk-level risk-med">Medium</span></td>
+            <td>Load testing at 10,000 concurrent orders required before Phase 1 launch. Fallback to rule-based queue if ML inference latency degrades.</td>
+          </tr>
+          <tr>
+            <td>Courier equity concerns if AI routing consistently assigns longer routes to specific cohorts</td>
+            <td><span class="risk-level risk-med">Medium</span></td>
+            <td>Monthly bias audit on routing distribution by courier cohort, zone, and earnings impact. Algorithmic fairness review in Phase 2 scope.</td>
+          </tr>
+          <tr>
+            <td>Third-party weather and event API availability affects heatmap prediction quality</td>
+            <td><span class="risk-level risk-low">Low</span></td>
+            <td>Fallback model (historical patterns only) activates if external APIs are unavailable for more than 5 minutes. Model confidence score displayed to dispatchers in all cases.</td>
+          </tr>
+        </tbody>
+      </table>
+    </section>
+
+    <!-- 10: OUT OF SCOPE -->
+    <section id="scope" class="section">
+      <div class="section-number">10 — Out of Scope</div>
+      <h2>What we are deliberately not building in Phase 1</h2>
+      <p>Scope boundaries protect delivery focus and prevent feature creep. The following are explicitly out of scope for Phase 1:</p>
+      <table>
+        <thead>
+          <tr><th>Feature / Capability</th><th>Reason deferred</th></tr>
+        </thead>
+        <tbody>
+          <tr>
+            <td>Fully autonomous dispatch (no human in loop)</td>
+            <td>Dispatcher trust must be established in Phase 1 before autonomy is introduced. Phase 3 scope.</td>
+          </tr>
+          <tr>
+            <td>Integration with restaurant preparation time signals</td>
+            <td>Requires partner API negotiation with 50+ restaurant chains. Phase 3 scope.</td>
+          </tr>
+          <tr>
+            <td>Cross-market or cross-city demand balancing</td>
+            <td>Single-market model must be validated first. Phase 3 scope.</td>
+          </tr>
+          <tr>
+            <td>Courier earnings guarantee or incentive optimization</td>
+            <td>Falls under compensation product ownership, not dispatch. Separate PRD required.</td>
+          </tr>
+          <tr>
+            <td>Customer-facing delivery tracking improvements</td>
+            <td>Customer experience team owns that surface. SmartDispatch AI is an internal operations tool only.</td>
+          </tr>
+        </tbody>
+      </table>
+    </section>
+
+  </main>
+</div>
+
+<footer>
+  <p>Jonathan Ekhator &nbsp;·&nbsp; Senior Product Manager &nbsp;·&nbsp; PMP · MSc Public Health · MBA</p>
+  <p style="margin-top: 6px;"><a href="mailto:jonathanekhator@outlook.com">jonathanekhator@outlook.com</a> &nbsp;·&nbsp; <a href="https://www.linkedin.com/in/jonathan-e-b5186b32/">LinkedIn</a> &nbsp;·&nbsp; <a href="https://sites.google.com/view/jonathan-ekhator/home">← Return to portfolio</a></p>
+</footer>
+
+</body>
+</html>

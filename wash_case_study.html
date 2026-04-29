@@ -1,0 +1,1050 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>WASH Budget Intelligence Dashboard — PM Case Study | Jonathan Ekhator</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Playfair+Display:ital,wght@0,400;0,600;0,700;1,400&family=Source+Sans+3:wght@300;400;500;600&display=swap" rel="stylesheet">
+<style>
+  *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+  :root {
+    --navy: #1A2744;
+    --navy-mid: #243558;
+    --navy-light: #EEF1F8;
+    --amber: #D4860A;
+    --amber-light: #FEF3DC;
+    --green: #1B6840;
+    --green-light: #E6F4ED;
+    --red: #B03A2E;
+    --red-light: #FDECEA;
+    --warm-white: #F7F6F2;
+    --white: #FFFFFF;
+    --text-dark: #111827;
+    --text-mid: #4B5563;
+    --text-light: #9CA3AF;
+    --border: #E5E0D8;
+    --serif: 'Playfair Display', Georgia, serif;
+    --sans: 'Source Sans 3', system-ui, sans-serif;
+  }
+
+  html { scroll-behavior: smooth; }
+
+  body {
+    font-family: var(--sans);
+    background: var(--warm-white);
+    color: var(--text-dark);
+    line-height: 1.7;
+    font-size: 16px;
+  }
+
+  /* NAV */
+  nav {
+    position: sticky;
+    top: 0;
+    z-index: 100;
+    background: var(--navy);
+    padding: 0 2rem;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    height: 56px;
+    border-bottom: 1px solid rgba(255,255,255,0.08);
+  }
+  .nav-brand {
+    font-family: var(--serif);
+    color: rgba(255,255,255,0.9);
+    font-size: 15px;
+    letter-spacing: 0.01em;
+    text-decoration: none;
+  }
+  .nav-links {
+    display: flex;
+    gap: 2rem;
+    list-style: none;
+  }
+  .nav-links a {
+    font-size: 13px;
+    color: rgba(255,255,255,0.55);
+    text-decoration: none;
+    letter-spacing: 0.04em;
+    text-transform: uppercase;
+    font-weight: 500;
+    transition: color 0.2s;
+  }
+  .nav-links a:hover { color: rgba(255,255,255,0.9); }
+
+  /* HERO */
+  .hero {
+    background: var(--navy);
+    padding: 5rem 2rem 4rem;
+    position: relative;
+    overflow: hidden;
+  }
+  .hero::after {
+    content: '';
+    position: absolute;
+    bottom: 0; left: 0; right: 0;
+    height: 1px;
+    background: linear-gradient(90deg, transparent, rgba(212,134,10,0.4), transparent);
+  }
+  .hero-inner {
+    max-width: 860px;
+    margin: 0 auto;
+  }
+  .hero-tag {
+    display: inline-flex;
+    align-items: center;
+    gap: 8px;
+    background: rgba(212,134,10,0.15);
+    border: 1px solid rgba(212,134,10,0.3);
+    color: #E8A530;
+    font-size: 12px;
+    font-weight: 600;
+    letter-spacing: 0.08em;
+    text-transform: uppercase;
+    padding: 5px 14px;
+    border-radius: 100px;
+    margin-bottom: 1.5rem;
+  }
+  .hero h1 {
+    font-family: var(--serif);
+    font-size: clamp(2rem, 4vw, 3rem);
+    font-weight: 700;
+    color: #FFFFFF;
+    line-height: 1.2;
+    margin-bottom: 1rem;
+  }
+  .hero h1 em {
+    font-style: italic;
+    color: #E8A530;
+  }
+  .hero-subtitle {
+    font-size: 18px;
+    color: rgba(255,255,255,0.65);
+    font-weight: 300;
+    max-width: 640px;
+    margin-bottom: 2.5rem;
+    line-height: 1.6;
+  }
+  .hero-meta {
+    display: flex;
+    gap: 2rem;
+    flex-wrap: wrap;
+    padding-top: 1.5rem;
+    border-top: 1px solid rgba(255,255,255,0.1);
+    margin-bottom: 3rem;
+  }
+  .meta-item {
+    display: flex;
+    flex-direction: column;
+    gap: 3px;
+  }
+  .meta-label {
+    font-size: 11px;
+    letter-spacing: 0.08em;
+    text-transform: uppercase;
+    color: rgba(255,255,255,0.4);
+    font-weight: 600;
+  }
+  .meta-value {
+    font-size: 14px;
+    color: rgba(255,255,255,0.85);
+    font-weight: 500;
+  }
+
+  /* METRICS BAR */
+  .metrics-bar {
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    gap: 1px;
+    background: rgba(255,255,255,0.08);
+    border: 1px solid rgba(255,255,255,0.08);
+    border-radius: 12px;
+    overflow: hidden;
+  }
+  .metric-cell {
+    background: rgba(255,255,255,0.03);
+    padding: 1.5rem;
+    text-align: center;
+  }
+  .metric-number {
+    font-family: var(--serif);
+    font-size: 2.8rem;
+    font-weight: 700;
+    color: #E8A530;
+    line-height: 1;
+    margin-bottom: 6px;
+  }
+  .metric-label {
+    font-size: 13px;
+    color: rgba(255,255,255,0.55);
+    font-weight: 400;
+    line-height: 1.4;
+  }
+
+  /* MAIN CONTENT */
+  .page-body {
+    max-width: 860px;
+    margin: 0 auto;
+    padding: 4rem 2rem;
+  }
+
+  /* SECTIONS */
+  .section {
+    margin-bottom: 4rem;
+    padding-bottom: 4rem;
+    border-bottom: 1px solid var(--border);
+  }
+  .section:last-child { border-bottom: none; }
+
+  .section-number {
+    font-size: 11px;
+    font-weight: 700;
+    letter-spacing: 0.12em;
+    text-transform: uppercase;
+    color: var(--amber);
+    margin-bottom: 0.5rem;
+  }
+  .section h2 {
+    font-family: var(--serif);
+    font-size: 1.9rem;
+    font-weight: 700;
+    color: var(--navy);
+    margin-bottom: 1.5rem;
+    line-height: 1.25;
+  }
+  .section p {
+    color: var(--text-mid);
+    margin-bottom: 1rem;
+    font-size: 16px;
+  }
+  .section p:last-child { margin-bottom: 0; }
+
+  /* CALLOUT */
+  .callout {
+    background: var(--navy-light);
+    border-left: 3px solid var(--navy);
+    border-radius: 0 8px 8px 0;
+    padding: 1.25rem 1.5rem;
+    margin: 1.5rem 0;
+  }
+  .callout p {
+    font-family: var(--serif);
+    font-style: italic;
+    font-size: 17px;
+    color: var(--navy);
+    margin: 0;
+    line-height: 1.6;
+  }
+
+  .callout-warning {
+    background: var(--amber-light);
+    border-left-color: var(--amber);
+  }
+  .callout-warning p { color: #7A4C00; }
+
+  /* TAGS */
+  .tag {
+    display: inline-block;
+    background: var(--navy-light);
+    color: var(--navy);
+    font-size: 12px;
+    font-weight: 600;
+    padding: 3px 10px;
+    border-radius: 100px;
+    margin: 3px 3px 3px 0;
+    letter-spacing: 0.02em;
+  }
+
+  /* CARD GRID */
+  .card-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+    gap: 1rem;
+    margin: 1.5rem 0;
+  }
+  .card {
+    background: var(--white);
+    border: 1px solid var(--border);
+    border-radius: 12px;
+    padding: 1.25rem;
+  }
+  .card-icon {
+    width: 36px;
+    height: 36px;
+    border-radius: 8px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    margin-bottom: 0.75rem;
+    font-size: 17px;
+  }
+  .card-icon.navy { background: var(--navy-light); }
+  .card-icon.amber { background: var(--amber-light); }
+  .card-icon.green { background: var(--green-light); }
+  .card h4 {
+    font-size: 14px;
+    font-weight: 600;
+    color: var(--text-dark);
+    margin-bottom: 4px;
+  }
+  .card p {
+    font-size: 13px;
+    color: var(--text-mid);
+    margin: 0;
+    line-height: 1.5;
+  }
+
+  /* DISCOVERY GRID */
+  .discovery-grid {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 1rem;
+    margin: 1.5rem 0;
+  }
+  .finding-card {
+    background: var(--white);
+    border: 1px solid var(--border);
+    border-radius: 10px;
+    padding: 1.25rem;
+  }
+  .finding-card .finding-label {
+    font-size: 11px;
+    font-weight: 700;
+    letter-spacing: 0.1em;
+    text-transform: uppercase;
+    color: var(--amber);
+    margin-bottom: 6px;
+  }
+  .finding-card p {
+    font-size: 14px;
+    color: var(--text-mid);
+    margin: 0;
+    line-height: 1.55;
+  }
+
+  /* JTBD */
+  .jtbd-item {
+    background: var(--white);
+    border: 1px solid var(--border);
+    border-radius: 10px;
+    padding: 1.25rem;
+    margin: 0.75rem 0;
+    display: grid;
+    grid-template-columns: auto 1fr;
+    gap: 1rem;
+    align-items: start;
+  }
+  .jtbd-who {
+    background: var(--navy);
+    color: white;
+    font-size: 11px;
+    font-weight: 700;
+    padding: 3px 10px;
+    border-radius: 100px;
+    white-space: nowrap;
+    letter-spacing: 0.04em;
+    text-transform: uppercase;
+    margin-top: 2px;
+  }
+  .jtbd-item p {
+    font-size: 14px;
+    color: var(--text-mid);
+    margin: 0;
+    line-height: 1.55;
+    font-style: italic;
+  }
+
+  /* ARCHITECTURE BOX */
+  .arch-box {
+    background: var(--white);
+    border: 1px solid var(--border);
+    border-radius: 12px;
+    overflow: hidden;
+    margin: 1.5rem 0;
+  }
+  .arch-header {
+    background: var(--navy);
+    padding: 0.9rem 1.25rem;
+  }
+  .arch-header h4 {
+    color: white;
+    font-size: 13px;
+    font-weight: 600;
+    letter-spacing: 0.04em;
+    text-transform: uppercase;
+  }
+  .arch-row {
+    display: grid;
+    grid-template-columns: 1fr auto 1fr auto 1fr;
+    align-items: center;
+    gap: 0;
+    padding: 1.5rem;
+  }
+  .arch-node {
+    text-align: center;
+    padding: 1rem;
+  }
+  .arch-node-icon {
+    width: 44px;
+    height: 44px;
+    border-radius: 10px;
+    margin: 0 auto 8px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 20px;
+  }
+  .arch-node-title {
+    font-size: 13px;
+    font-weight: 600;
+    color: var(--text-dark);
+    margin-bottom: 3px;
+  }
+  .arch-node-sub {
+    font-size: 11px;
+    color: var(--text-light);
+    line-height: 1.4;
+  }
+  .arch-arrow {
+    font-size: 20px;
+    color: var(--text-light);
+    text-align: center;
+  }
+  .arch-sources {
+    padding: 0 1.5rem 1.5rem;
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    gap: 0.75rem;
+    border-top: 1px solid var(--border);
+  }
+  .source-pill {
+    background: var(--navy-light);
+    border-radius: 8px;
+    padding: 0.75rem 1rem;
+    font-size: 13px;
+    font-weight: 500;
+    color: var(--navy);
+    text-align: center;
+  }
+
+  /* FEATURE LIST */
+  .feature-list {
+    list-style: none;
+    margin: 1.25rem 0;
+  }
+  .feature-list li {
+    display: flex;
+    align-items: flex-start;
+    gap: 12px;
+    padding: 0.85rem 0;
+    border-bottom: 1px solid var(--border);
+    font-size: 15px;
+    color: var(--text-mid);
+  }
+  .feature-list li:last-child { border-bottom: none; }
+  .feature-check {
+    width: 20px;
+    height: 20px;
+    background: var(--green-light);
+    border-radius: 50%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    flex-shrink: 0;
+    margin-top: 2px;
+    font-size: 11px;
+    color: var(--green);
+    font-weight: 700;
+  }
+  .feature-list strong {
+    color: var(--text-dark);
+    font-weight: 600;
+  }
+
+  /* TIMELINE */
+  .timeline {
+    position: relative;
+    padding-left: 2rem;
+    margin: 1.5rem 0;
+  }
+  .timeline::before {
+    content: '';
+    position: absolute;
+    left: 7px;
+    top: 8px;
+    bottom: 8px;
+    width: 2px;
+    background: var(--border);
+  }
+  .timeline-item {
+    position: relative;
+    margin-bottom: 1.75rem;
+  }
+  .timeline-item::before {
+    content: '';
+    position: absolute;
+    left: -1.625rem;
+    top: 6px;
+    width: 10px;
+    height: 10px;
+    border-radius: 50%;
+    background: var(--navy);
+    border: 2px solid var(--warm-white);
+    box-shadow: 0 0 0 2px var(--navy);
+  }
+  .timeline-phase {
+    font-size: 11px;
+    font-weight: 700;
+    letter-spacing: 0.1em;
+    text-transform: uppercase;
+    color: var(--amber);
+    margin-bottom: 3px;
+  }
+  .timeline-title {
+    font-size: 15px;
+    font-weight: 600;
+    color: var(--text-dark);
+    margin-bottom: 4px;
+  }
+  .timeline-desc {
+    font-size: 14px;
+    color: var(--text-mid);
+    line-height: 1.55;
+  }
+
+  /* IMPACT GRID */
+  .impact-grid {
+    display: grid;
+    grid-template-columns: repeat(2, 1fr);
+    gap: 1rem;
+    margin: 1.5rem 0;
+  }
+  .impact-card {
+    background: var(--white);
+    border: 1px solid var(--border);
+    border-radius: 12px;
+    padding: 1.5rem;
+  }
+  .impact-card.primary {
+    background: var(--navy);
+    border-color: var(--navy);
+  }
+  .impact-number {
+    font-family: var(--serif);
+    font-size: 2.5rem;
+    font-weight: 700;
+    color: var(--amber);
+    line-height: 1;
+    margin-bottom: 6px;
+  }
+  .impact-card.primary .impact-number { color: #E8A530; }
+  .impact-label {
+    font-size: 14px;
+    color: var(--text-mid);
+    font-weight: 400;
+    line-height: 1.4;
+  }
+  .impact-card.primary .impact-label { color: rgba(255,255,255,0.65); }
+  .impact-context {
+    font-size: 12px;
+    color: var(--text-light);
+    margin-top: 6px;
+    font-style: italic;
+  }
+  .impact-card.primary .impact-context { color: rgba(255,255,255,0.35); }
+
+  /* STAKEHOLDER MAP */
+  .stakeholder-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(150px, 1fr));
+    gap: 0.75rem;
+    margin: 1.25rem 0;
+  }
+  .stakeholder-pill {
+    background: var(--white);
+    border: 1px solid var(--border);
+    border-radius: 10px;
+    padding: 0.9rem 1rem;
+    text-align: center;
+  }
+  .stakeholder-role {
+    font-size: 11px;
+    font-weight: 700;
+    text-transform: uppercase;
+    letter-spacing: 0.08em;
+    color: var(--amber);
+    margin-bottom: 4px;
+  }
+  .stakeholder-name {
+    font-size: 13px;
+    font-weight: 600;
+    color: var(--text-dark);
+  }
+  .stakeholder-need {
+    font-size: 12px;
+    color: var(--text-mid);
+    margin-top: 3px;
+    line-height: 1.4;
+  }
+
+  /* REFLECTION */
+  .reflection-item {
+    display: flex;
+    gap: 1rem;
+    padding: 1rem 0;
+    border-bottom: 1px solid var(--border);
+    align-items: flex-start;
+  }
+  .reflection-item:last-child { border-bottom: none; }
+  .reflection-badge {
+    background: var(--navy-light);
+    color: var(--navy);
+    font-size: 11px;
+    font-weight: 700;
+    padding: 4px 10px;
+    border-radius: 100px;
+    white-space: nowrap;
+    text-transform: uppercase;
+    letter-spacing: 0.06em;
+    margin-top: 2px;
+  }
+  .reflection-item p {
+    font-size: 14px;
+    color: var(--text-mid);
+    margin: 0;
+    line-height: 1.6;
+  }
+
+  /* FOOTER */
+  footer {
+    background: var(--navy);
+    padding: 2.5rem 2rem;
+    text-align: center;
+  }
+  footer p {
+    font-size: 14px;
+    color: rgba(255,255,255,0.45);
+  }
+  footer a {
+    color: rgba(255,255,255,0.7);
+    text-decoration: underline;
+    text-underline-offset: 3px;
+  }
+
+  /* TABLE */
+  table {
+    width: 100%;
+    border-collapse: collapse;
+    margin: 1.25rem 0;
+    font-size: 14px;
+    background: var(--white);
+    border-radius: 10px;
+    overflow: hidden;
+    border: 1px solid var(--border);
+  }
+  th {
+    background: var(--navy);
+    color: rgba(255,255,255,0.85);
+    font-size: 12px;
+    font-weight: 600;
+    text-transform: uppercase;
+    letter-spacing: 0.07em;
+    padding: 10px 14px;
+    text-align: left;
+  }
+  td {
+    padding: 10px 14px;
+    color: var(--text-mid);
+    border-bottom: 1px solid var(--border);
+    vertical-align: top;
+    line-height: 1.5;
+  }
+  tr:last-child td { border-bottom: none; }
+  tr:hover td { background: var(--warm-white); }
+
+  @media (max-width: 640px) {
+    .metrics-bar { grid-template-columns: 1fr; }
+    .discovery-grid { grid-template-columns: 1fr; }
+    .impact-grid { grid-template-columns: 1fr; }
+    .arch-row { grid-template-columns: 1fr; }
+    .arch-arrow { transform: rotate(90deg); }
+    .arch-sources { grid-template-columns: 1fr; }
+    .nav-links { display: none; }
+  }
+</style>
+</head>
+<body>
+
+<nav>
+  <a href="#" class="nav-brand">Jonathan Ekhator — PM Portfolio</a>
+  <ul class="nav-links">
+    <li><a href="#challenge">Challenge</a></li>
+    <li><a href="#discovery">Discovery</a></li>
+    <li><a href="#solution">Solution</a></li>
+    <li><a href="#impact">Impact</a></li>
+    <li><a href="https://sites.google.com/view/jonathan-ekhator/home">← Back to Portfolio</a></li>
+  </ul>
+</nav>
+
+<!-- HERO -->
+<header class="hero">
+  <div class="hero-inner">
+    <div class="hero-tag">PM Case Study &nbsp;·&nbsp; Real Work</div>
+    <h1>From Manual to Automated:<br><em>WASH Budget Intelligence</em><br>at UNICEF Nigeria</h1>
+    <p class="hero-subtitle">How I led the design and delivery of a Power BI analytics platform that transformed multi-state WASH budget oversight — cutting decision cycles from weeks to days and eliminating 60% of manual reporting effort.</p>
+
+    <div class="hero-meta">
+      <div class="meta-item">
+        <span class="meta-label">Organization</span>
+        <span class="meta-value">UNICEF Nigeria</span>
+      </div>
+      <div class="meta-item">
+        <span class="meta-label">Role</span>
+        <span class="meta-value">Product Manager, IT & Data</span>
+      </div>
+      <div class="meta-item">
+        <span class="meta-label">Timeline</span>
+        <span class="meta-value">2019 – 2022</span>
+      </div>
+      <div class="meta-item">
+        <span class="meta-label">Sector</span>
+        <span class="meta-value">WASH / Public Health</span>
+      </div>
+    </div>
+
+    <div class="metrics-bar">
+      <div class="metric-cell">
+        <div class="metric-number">60%</div>
+        <div class="metric-label">Reduction in manual reporting effort</div>
+      </div>
+      <div class="metric-cell">
+        <div class="metric-number">8→2</div>
+        <div class="metric-label">Weeks to days for decision cycles</div>
+      </div>
+      <div class="metric-cell">
+        <div class="metric-number">1,000+</div>
+        <div class="metric-label">Facilities prioritized using the platform</div>
+      </div>
+    </div>
+  </div>
+</header>
+
+<!-- BODY -->
+<main class="page-body">
+
+  <!-- CONTEXT -->
+  <section id="context" class="section">
+    <div class="section-number">01 — Context</div>
+    <h2>The environment I was operating in</h2>
+    <p>Nigeria's WASH sector operates across 36 states and 774 local government areas (LGAs), with funding flowing from international donors — primarily UNICEF, FCDO, the EU — through federal ministries and down to state-level implementing agencies. Budget execution data was the heartbeat of every Joint Sector Review (JSR), the annual process through which government and donors assess sector performance and make allocation decisions affecting millions of Nigerians' access to clean water and sanitation.</p>
+    <p>As Product Manager for IT and Data, I owned the digital and data products underpinning that entire decision-making system. The budget intelligence platform described here was the most impactful of 10 national and sub-national digital data products I delivered across 8 years at UNICEF Nigeria.</p>
+
+    <div class="callout">
+      <p>"Before this platform existed, the JSR preparation cycle required 6–8 weeks of manual data compilation. State officers were spending more time building spreadsheets than interpreting the data inside them."</p>
+    </div>
+
+    <div class="card-grid">
+      <div class="card">
+        <div class="card-icon navy">🏛️</div>
+        <h4>Primary users</h4>
+        <p>State-level WASH planners, UNICEF programme officers, RUWASA directors, donor analysts from FCDO and EU</p>
+      </div>
+      <div class="card">
+        <div class="card-icon amber">📊</div>
+        <h4>Data environment</h4>
+        <p>3 disconnected data sources: ministry Excel trackers, DHIS2 monitoring data, donor financial reporting systems</p>
+      </div>
+      <div class="card">
+        <div class="card-icon green">🌍</div>
+        <h4>Geographic scale</h4>
+        <p>Multi-state deployment covering Kaduna, Bauchi, Adamawa, and surrounding states across northern Nigeria</p>
+      </div>
+    </div>
+  </section>
+
+  <!-- CHALLENGE -->
+  <section id="challenge" class="section">
+    <div class="section-number">02 — The Challenge</div>
+    <h2>What was broken, and why it mattered</h2>
+    <p>The core problem was systemic invisibility. Budget execution data existed — but it lived in incompatible formats, updated on different schedules, and was owned by different actors with different incentives to share it. By the time data was compiled, cross-checked, and formatted for review, it was already 6–8 weeks old.</p>
+
+    <div class="callout callout-warning">
+      <p>Budget execution gaps went undetected until the end of the fiscal cycle. Underspent funds that could have been reallocated sat idle. Overspent lines triggered last-minute funding shortfalls. The system had no early warning mechanism.</p>
+    </div>
+
+    <p>I identified 4 compounding failure modes through initial stakeholder conversations:</p>
+
+    <div class="discovery-grid">
+      <div class="finding-card">
+        <div class="finding-label">Pain Point 01</div>
+        <p><strong>Manual data compilation:</strong> State programme officers averaged 4+ hours per week copy-pasting data across Excel files with no audit trail, creating constant version conflicts.</p>
+      </div>
+      <div class="finding-card">
+        <div class="finding-label">Pain Point 02</div>
+        <p><strong>Siloed data sources:</strong> Ministry financial data, WASH monitoring data, and donor reporting systems were never reconciled in real time — or at all before the JSR.</p>
+      </div>
+      <div class="finding-card">
+        <div class="finding-label">Pain Point 03</div>
+        <p><strong>No execution alerts:</strong> There was no mechanism to flag when budget execution dropped below critical thresholds (e.g., below 60% of planned spend by Q3).</p>
+      </div>
+      <div class="finding-card">
+        <div class="finding-label">Pain Point 04</div>
+        <p><strong>Inaccessible for non-analysts:</strong> Existing reports required Excel skills to navigate. Ministry directors and government counterparts could not self-serve any data insights.</p>
+      </div>
+    </div>
+  </section>
+
+  <!-- DISCOVERY -->
+  <section id="discovery" class="section">
+    <div class="section-number">03 — Discovery</div>
+    <h2>Who I talked to and what I learned</h2>
+    <p>I ran a structured discovery process across 5 user types, combining one-on-one interviews (18 total), contextual observation of the JSR preparation process, and a review of 3 prior JSR data packs to map current-state data flows. Here is what each user group needed:</p>
+
+    <div class="stakeholder-grid">
+      <div class="stakeholder-pill">
+        <div class="stakeholder-role">Primary</div>
+        <div class="stakeholder-name">UNICEF Programme Officers</div>
+        <div class="stakeholder-need">Real-time execution tracking across states</div>
+      </div>
+      <div class="stakeholder-pill">
+        <div class="stakeholder-role">Primary</div>
+        <div class="stakeholder-name">State Ministry Planners</div>
+        <div class="stakeholder-need">LGA-level drill-down without Excel expertise</div>
+      </div>
+      <div class="stakeholder-pill">
+        <div class="stakeholder-role">Secondary</div>
+        <div class="stakeholder-name">RUWASA Directors</div>
+        <div class="stakeholder-need">Executive summary view, no raw data</div>
+      </div>
+      <div class="stakeholder-pill">
+        <div class="stakeholder-role">Secondary</div>
+        <div class="stakeholder-name">Donor Analysts (FCDO/EU)</div>
+        <div class="stakeholder-need">Audit-ready exports, consistent formatting</div>
+      </div>
+      <div class="stakeholder-pill">
+        <div class="stakeholder-role">Tertiary</div>
+        <div class="stakeholder-name">LGA Coordinators</div>
+        <div class="stakeholder-need">Their data, their progress — visible to them</div>
+      </div>
+    </div>
+
+    <h3 style="font-family: var(--serif); font-size: 1.2rem; color: var(--navy); margin: 2rem 0 1rem;">Jobs-to-be-Done synthesis</h3>
+    <p>Three core JTBD statements emerged from my synthesis of discovery findings:</p>
+
+    <div class="jtbd-item">
+      <span class="jtbd-who">Programme Officer</span>
+      <p>"When I'm preparing for the JSR, I need to see budget execution vs. plan across all states in one view, so I can identify gaps before they become crisis items on the review agenda."</p>
+    </div>
+    <div class="jtbd-item">
+      <span class="jtbd-who">Ministry Planner</span>
+      <p>"When I'm reporting to the Director, I need to show LGA-level progress without needing to open 12 Excel files, so I can brief accurately and without preparation time."</p>
+    </div>
+    <div class="jtbd-item">
+      <span class="jtbd-who">Donor Analyst</span>
+      <p>"When I'm validating spend against our commitment, I need data that is traceable and consistent, so I don't have to reconcile UNICEF data with ministry data manually."</p>
+    </div>
+  </section>
+
+  <!-- SOLUTION -->
+  <section id="solution" class="section">
+    <div class="section-number">04 — Solution</div>
+    <h2>What we designed and built</h2>
+    <p>The solution was a Power BI-based budget intelligence platform connecting 3 live data sources through a centralized data pipeline. I owned the product definition: data model design (ERD), indicator dictionary, feature specifications, and user acceptance criteria. I worked with 2 data engineers and a GIS analyst on the technical build, and engaged government IT counterparts at the state level for deployment and access provisioning.</p>
+
+    <div class="arch-box">
+      <div class="arch-header">
+        <h4>Solution architecture — data flow</h4>
+      </div>
+      <div class="arch-row">
+        <div class="arch-node">
+          <div class="arch-node-icon" style="background:#EEF1F8;">📥</div>
+          <div class="arch-node-title">Data Sources</div>
+          <div class="arch-node-sub">Ministry Excel, DHIS2 API, Donor Systems</div>
+        </div>
+        <div class="arch-arrow">→</div>
+        <div class="arch-node">
+          <div class="arch-node-icon" style="background:#FEF3DC;">⚙️</div>
+          <div class="arch-node-title">ETL Pipeline</div>
+          <div class="arch-node-sub">SQL + Power Query cleaning & standardization</div>
+        </div>
+        <div class="arch-arrow">→</div>
+        <div class="arch-node">
+          <div class="arch-node-icon" style="background:#E6F4ED;">📊</div>
+          <div class="arch-node-title">Power BI Dashboard</div>
+          <div class="arch-node-sub">4 views, role-based access, auto-refresh</div>
+        </div>
+      </div>
+      <div style="padding: 0 1.5rem 0.75rem; font-size: 12px; font-weight: 700; letter-spacing: 0.08em; text-transform: uppercase; color: var(--text-light);">Connected data sources</div>
+      <div class="arch-sources">
+        <div class="source-pill">Ministry Financial Tracker (Excel)</div>
+        <div class="source-pill">DHIS2 WASH Monitoring API</div>
+        <div class="source-pill">UNICEF Donor Report System</div>
+      </div>
+    </div>
+
+    <h3 style="font-family: var(--serif); font-size: 1.2rem; color: var(--navy); margin: 2rem 0 1rem;">4 core product features</h3>
+    <ul class="feature-list">
+      <li>
+        <div class="feature-check">✓</div>
+        <div><strong>Multi-state budget vs. actuals view</strong> — Real-time execution tracking across all states and LGAs with configurable date ranges and spending categories, replacing the 8-week manual compilation process.</div>
+      </li>
+      <li>
+        <div class="feature-check">✓</div>
+        <div><strong>LGA-level drill-down</strong> — Hierarchical navigation from national → state → LGA → intervention level, accessible to non-technical users via click-through, no Excel required.</div>
+      </li>
+      <li>
+        <div class="feature-check">✓</div>
+        <div><strong>Automated execution alerts</strong> — Configurable threshold alerts (flagging execution below 60% of plan by Q3) delivered via email digest to programme officers, eliminating end-of-cycle surprises.</div>
+      </li>
+      <li>
+        <div class="feature-check">✓</div>
+        <div><strong>JSR auto-report generation</strong> — One-click export of pre-formatted JSR data packs in donor-standard templates, cutting quarterly JSR preparation from 6–8 weeks to under 3 days.</div>
+      </li>
+    </ul>
+  </section>
+
+  <!-- DELIVERY -->
+  <section id="delivery" class="section">
+    <div class="section-number">05 — Delivery</div>
+    <h2>How we shipped it</h2>
+    <p>Delivery ran as a hybrid agile-waterfall engagement: 2-week sprints for the build phases, waterfall-style gates for government IT approvals and data-sharing agreements. The biggest constraint was not technical — it was institutional. Getting 3 separate organizations to agree on a shared data schema took 6 of the 16 total weeks.</p>
+
+    <div class="timeline">
+      <div class="timeline-item">
+        <div class="timeline-phase">Weeks 1–4</div>
+        <div class="timeline-title">Discovery & Data Audit</div>
+        <div class="timeline-desc">Stakeholder interviews (18 sessions), current-state data flow mapping, data quality audit across 3 source systems. Identified 4 critical data gaps requiring upstream standardization before pipeline build.</div>
+      </div>
+      <div class="timeline-item">
+        <div class="timeline-phase">Weeks 5–8</div>
+        <div class="timeline-title">ERD Design & Schema Agreement</div>
+        <div class="timeline-desc">Designed data model and indicator dictionary. Facilitated 3 cross-organizational working sessions to align on shared field names, update frequencies, and data ownership. Produced engineering-ready ERD and pipeline spec.</div>
+      </div>
+      <div class="timeline-item">
+        <div class="timeline-phase">Weeks 9–14</div>
+        <div class="timeline-title">Build — ETL Pipeline + Dashboard</div>
+        <div class="timeline-desc">Worked with 2 data engineers on SQL pipeline build and Power BI dashboard development. Ran weekly sprint reviews with a core group of 5 end users. Conducted 2 rounds of usability testing at state level — revised navigation architecture after round 1 feedback.</div>
+      </div>
+      <div class="timeline-item">
+        <div class="timeline-phase">Weeks 15–16</div>
+        <div class="timeline-title">UAT, Training & Handover</div>
+        <div class="timeline-desc">Ran structured UAT sessions with 12 end users across 3 states. Delivered training to 28 government and UNICEF staff. Produced user guide and data governance documentation. Platform went live before Q3 budget review cycle.</div>
+      </div>
+    </div>
+
+    <table>
+      <thead>
+        <tr>
+          <th>Challenge</th>
+          <th>How I resolved it</th>
+        </tr>
+      </thead>
+      <tbody>
+        <tr>
+          <td>Government IT restrictions blocked direct DHIS2 API access</td>
+          <td>Negotiated a scheduled data export agreement with ministry IT, feeding into a secure SharePoint intermediary layer</td>
+        </tr>
+        <tr>
+          <td>Inconsistent field naming across 3 data sources</td>
+          <td>Produced a cross-source indicator dictionary and ran a 2-day data harmonization workshop with data custodians</td>
+        </tr>
+        <tr>
+          <td>Low digital literacy among some state-level users</td>
+          <td>Added a simplified 1-page "dashboard summary" view with plain-language annotations, alongside the full analyst view</td>
+        </tr>
+        <tr>
+          <td>Connectivity constraints in remote LGA offices</td>
+          <td>Built offline-cached PDF export option; Power BI mobile app deployed on government tablets</td>
+        </tr>
+      </tbody>
+    </table>
+  </section>
+
+  <!-- IMPACT -->
+  <section id="impact" class="section">
+    <div class="section-number">06 — Impact</div>
+    <h2>What changed after we shipped</h2>
+    <p>The platform was in active use across 4 states within 3 months of launch and was adopted as the official JSR data tool by the UNICEF Nigeria WASH programme. The outcomes fell into 3 categories: operational efficiency, decision quality, and adoption.</p>
+
+    <div class="impact-grid">
+      <div class="impact-card primary">
+        <div class="impact-number">60%</div>
+        <div class="impact-label">Reduction in manual reporting effort per officer per quarter</div>
+        <div class="impact-context">Measured by comparing pre- and post-deployment time tracking across 12 programme officers</div>
+      </div>
+      <div class="impact-card primary">
+        <div class="impact-number">6wk → 2d</div>
+        <div class="impact-label">JSR data preparation cycle compressed — from 6–8 weeks to 2–3 days</div>
+        <div class="impact-context">Validated by comparing JSR preparation logs for 2019 (pre) vs. 2021 (post)</div>
+      </div>
+      <div class="impact-card">
+        <div class="impact-number">1,000+</div>
+        <div class="impact-label">Health and education facilities informed by the platform's prioritization data</div>
+        <div class="impact-context">Via downstream climate risk and budget execution integration</div>
+      </div>
+      <div class="impact-card">
+        <div class="impact-number">28</div>
+        <div class="impact-label">Government and UNICEF staff trained and independently using the platform within 60 days of launch</div>
+        <div class="impact-context">Across 4 states; no ongoing support requests after week 6</div>
+      </div>
+    </div>
+
+    <div class="callout">
+      <p>"For the first time, a ministry director could open a single screen and see exactly where every dollar of WASH funding stood — without asking their team to spend a week pulling it together."</p>
+    </div>
+
+    <p>Beyond the metrics, the platform surfaced a systemic insight that changed how UNICEF Nigeria approached budget design: execution consistently lagged in LGAs with the highest WASH need, not the lowest. The platform made this visible at the LGA level for the first time, directly informing the allocation methodology for the subsequent programme cycle.</p>
+  </section>
+
+  <!-- REFLECTION -->
+  <section id="reflection" class="section">
+    <div class="section-number">07 — Reflection</div>
+    <h2>What I would do differently</h2>
+    <p>Every product teaches you something. These are the 3 things I would approach differently if I were building this today:</p>
+
+    <div class="reflection-item">
+      <span class="reflection-badge">Data instrumentation</span>
+      <p>I would instrument usage analytics from week one — not wait until post-launch adoption raised questions. Knowing which dashboard views were actually being used (versus which we assumed were valuable) would have sharpened iteration decisions significantly.</p>
+    </div>
+    <div class="reflection-item">
+      <span class="reflection-badge">Earlier field inclusion</span>
+      <p>LGA-level users (the people doing the actual data entry) were brought in too late in the process. Their feedback in UAT prompted a navigation redesign that should have happened in sprint 2, not sprint 8. Discovery needs to start at the furthest point of the user chain.</p>
+    </div>
+    <div class="reflection-item">
+      <span class="reflection-badge">Ownership plan</span>
+      <p>I should have started the handover planning at project kickoff, not week 14. The product was sustained because I advocated for it internally — but a formal product ownership and data stewardship plan would have reduced that dependency on me personally.</p>
+    </div>
+
+    <div style="margin-top: 2rem;">
+      <div class="section-number" style="margin-bottom: 0.75rem;">Skills demonstrated in this project</div>
+      <div>
+        <span class="tag">Power BI</span>
+        <span class="tag">SQL</span>
+        <span class="tag">ETL pipeline design</span>
+        <span class="tag">ERD / data modeling</span>
+        <span class="tag">DHIS2 API</span>
+        <span class="tag">Stakeholder discovery</span>
+        <span class="tag">JTBD</span>
+        <span class="tag">User acceptance testing</span>
+        <span class="tag">Government tech delivery</span>
+        <span class="tag">Donor-facing reporting</span>
+        <span class="tag">Agile / hybrid delivery</span>
+        <span class="tag">Multi-state programs</span>
+        <span class="tag">Indicator dictionary</span>
+        <span class="tag">Product training</span>
+      </div>
+    </div>
+  </section>
+
+</main>
+
+<footer>
+  <p>Jonathan Ekhator &nbsp;·&nbsp; Senior Product Manager &nbsp;·&nbsp; <a href="mailto:jonathanekhator@outlook.com">jonathanekhator@outlook.com</a> &nbsp;·&nbsp; <a href="https://www.linkedin.com/in/jonathan-e-b5186b32/">LinkedIn</a></p>
+  <p style="margin-top: 8px;">PMP · MSc Public Health · MBA · <a href="https://sites.google.com/view/jonathan-ekhator/home">← Return to portfolio</a></p>
+</footer>
+
+</body>
+</html>
